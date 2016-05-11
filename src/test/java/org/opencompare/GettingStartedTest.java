@@ -90,8 +90,17 @@ public class GettingStartedTest {
 
     }
 
+    /**
+     * iterate over a folder that contains PCM files and basic import/export to CSV
+     * @throws IOException
+     */
     @Test
     public void testPCMarchive() throws IOException {
+
+        // precondition: CSV folder exist
+        File f = new File(csvTargetFolder);
+        if (!f.exists() || !f.isDirectory())
+            assertTrue(f.mkdir());
 
         File dir = new File("/Users/macher1/Downloads/model/");
         assertTrue(dir.isDirectory());
