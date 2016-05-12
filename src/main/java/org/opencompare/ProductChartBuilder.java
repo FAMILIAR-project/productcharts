@@ -18,7 +18,11 @@ import java.util.stream.Collectors;
 public class ProductChartBuilder {
 
 
+
     Logger _log = Logger.getLogger("ProductChartBuilder");
+
+
+
 
     private final PCM _pcm;
 
@@ -33,10 +37,30 @@ public class ProductChartBuilder {
      */
     private String _y;
 
+    /**
+     * optional
+     * feature name for Z (bubble size)
+     *
+     */
+    private String _z;
+    // inv: _z != null <=> _withBubble
+    private final boolean _withBubble; // true if _z is specified
+
+
     public ProductChartBuilder (PCM pcm, String x, String y) {
         _pcm = pcm;
         _x = x;
         _y = y;
+        _withBubble = false;
+    }
+
+    public ProductChartBuilder (PCM pcm, String x, String y, String z) {
+        _pcm = pcm;
+        _x = x;
+        _y = y;
+        _z = z;
+        _withBubble = true;
+
     }
 
     public boolean build() {
@@ -50,9 +74,20 @@ public class ProductChartBuilder {
             return false;
         }
 
+        if (withBubble() && !checkConsistencyZ()) {
+            _log.warning("Feature " + _z + " is not a valid feature!");
+            return false;
+        }
+
+
         return true;
 
     }
+
+    private boolean withBubble() {
+        return _withBubble;
+    }
+
 
     /** TODO duplicated code on purpose (of course we have to iterate in one shot for checking X and Y)
      *  for locating the specific error (either X or Y)
@@ -80,14 +115,21 @@ public class ProductChartBuilder {
         return false;
     }
 
+    private boolean checkConsistencyZ() {
+
+        List<Feature> fts = _pcm.getConcreteFeatures();
+        for (Feature ft : fts) {
+            if (ft.getName().equals(_z))
+                return true;
+        }
+
+        return false;
+    }
+
 
     public String buildData() {
+
         StringBuilder sb = new StringBuilder();
-
-
-
-
-
         sb.append("x: ");
         sb.append("[");
 
@@ -143,6 +185,23 @@ public class ProductChartBuilder {
         }*/
 
         sb.append("]");
+
+        if (withBubble()) {
+            sb.append(", \n");
+            sb.append("marker: { size: ");
+            sb.append("[");
+            Collection<String> zs = new ArrayList<String>();
+            for (Product pdt : pdts) {
+                Cell c = pdt.findCell(_getFeature(_pcm, _z));
+                zs.add(c.getContent());
+            }
+            sb.append(zs.stream()
+                    .map(Object::toString)
+                    .collect(Collectors.joining(", "))); // / 10
+
+            sb.append("],\n");
+            sb.append("}");
+        }
 
 
         return sb.toString();
