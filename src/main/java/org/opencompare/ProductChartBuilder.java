@@ -216,4 +216,12 @@ public class ProductChartBuilder {
         }
         return null;
     }
+
+    public String getY() {
+        return _y;
+    }
+
+    public String getX() {
+        return _x;
+    }
 }

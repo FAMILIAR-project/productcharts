@@ -141,7 +141,11 @@ public class ProductChartTest {
                 "\ty: [1, 2, 4, 8, 16] }]";*/
 
         Mustache mustache = engine.getMustache("index");
-        String output = mustache.render(ImmutableMap.<String, Object>of("pcmData", data));
+        String output = mustache.render(ImmutableMap.<String, Object>of("pcmData", data,
+                "pcmTitle", "Nokia",
+                "xFeature", pchart.getX(),
+                "yFeature", pchart.getY()
+        ));
 
         FileWriter fw = new FileWriter(new File(chartTargetFolder + "/" + "index.html"));
         fw.write(output);
@@ -170,7 +174,11 @@ public class ProductChartTest {
 
 
         Mustache mustache = engine.getMustache("index");
-        String output = mustache.render(ImmutableMap.<String, Object>of("pcmData", data));
+        String output = mustache.render(ImmutableMap.<String, Object>of("pcmData", data,
+                "pcmTitle", "Nokia with Bubble",
+                "xFeature", pchart.getX(),
+                "yFeature", pchart.getY()
+        ));
 
         FileWriter fw = new FileWriter(new File(chartTargetFolder + "/" + "index-bubble.html"));
         fw.write(output);
@@ -198,11 +206,16 @@ public class ProductChartTest {
 
 
         Mustache mustache = engine.getMustache("index");
-        String output = mustache.render(ImmutableMap.<String, Object>of("pcmData", data));
+        String output = mustache.render(ImmutableMap.<String, Object>of("pcmData", data,
+                "pcmTitle", "Nokia with Bubble",
+                "xFeature", pchart.getX(),
+                "yFeature", pchart.getY()
+        ));
 
         FileWriter fw = new FileWriter(new File(chartTargetFolder + "/" + "index-pokemon-bubble.html"));
         fw.write(output);
         fw.close();
+
     }
 
     @Test
@@ -226,7 +239,11 @@ public class ProductChartTest {
 
 
         Mustache mustache = engine.getMustache("index");
-        String output = mustache.render(ImmutableMap.<String, Object>of("pcmData", data));
+        String output = mustache.render(ImmutableMap.<String, Object>of("pcmData", data,
+                "pcmTitle", "Nokia with Bubble",
+                "xFeature", pchart.getX(),
+                "yFeature", pchart.getY()
+        ));
 
         FileWriter fw = new FileWriter(new File(chartTargetFolder + "/" + "index-nokia.html"));
         fw.write(output);
@@ -253,7 +270,11 @@ public class ProductChartTest {
         String data = pchart.buildData();
 
         Mustache mustache = engine.getMustache("index");
-        String output = mustache.render(ImmutableMap.<String, Object> of("pcmData", data));
+        String output = mustache.render(ImmutableMap.<String, Object>of("pcmData", data,
+                "pcmTitle", "Nokia",
+                "xFeature", pchart.getX(),
+                "yFeature", pchart.getY()
+        ));
 
         FileWriter fw = new FileWriter(new File(chartTargetFolder + "/" + "index-nokia2.html"));
         fw.write(output);
@@ -265,7 +286,8 @@ public class ProductChartTest {
     public void testXYZTemplate3() throws IOException {
 
 
-        PCM pcmN = _loadPCM("pcms/Comparison_of_Nikon_DSLR_cameras_0.pcm");
+        PCMContainer pcmContainer = _loadPCMContainer("pcms/Comparison_of_Nikon_DSLR_cameras_0.pcm");
+        PCM pcmN = pcmContainer.getPcm();
 
         // precondition: output folder exist
         File f = new File(chartTargetFolder);
@@ -280,23 +302,55 @@ public class ProductChartTest {
         ProductChartBuilder pchart = new ProductChartBuilder(pcmN, "Weight (g)", "Metering pixels", "Focus points");
         String data = pchart.buildData();
 
+        String xFeature = pchart.getX();
+        String yFeature = pchart.getY();
 
         Mustache mustache = engine.getMustache("index");
-        String output = mustache.render(ImmutableMap.<String, Object>of("pcmData", data, "pcmTitle", "Nokia"));
+        String output = mustache.render(ImmutableMap.<String, Object>of("pcmData", data,
+                "pcmTitle", "Nokia with Bubble",
+                "xFeature", xFeature,
+                "yFeature", yFeature
+                ));
 
         FileWriter fw = new FileWriter(new File(chartTargetFolder + "/" + "index-nokia-bubble.html"));
         fw.write(output);
         fw.close();
+
+
+        _checkOccurencesInHTML(output, data, xFeature, yFeature);
+        // TODO: parse the HTML and check the validity or some specific properties (for the oracle)
+    }
+
+    private void _checkOccurencesInHTML(String outputHTML, String data, String xFeature, String yFeature) {
+        assertTrue(outputHTML.contains(data));
+        assertTrue(outputHTML.contains(xFeature));
+        assertTrue(outputHTML.contains(yFeature));
+
     }
 
 
     /**
-     * A helper method to get a PCM (limited in a sense we only retrieve the 1st element of PCMContainer)
+     * A helper method to get a PCM (share the limitation of _loadPCMContainter)
      * @param filename
      * @return
      * @throws IOException
      */
     private PCM _loadPCM(String filename) throws IOException {
+
+        PCMContainer pcmContainer = _loadPCMContainer(filename);
+        // Get the PCM
+        PCM pcm = pcmContainer.getPcm();
+
+        return pcm ;
+    }
+
+    /**
+     * A helper method to get a PCMContainer (limited in a sense we only retrieve the 1st element of containers)
+     * @param filename
+     * @return
+     * @throws IOException
+     */
+    private PCMContainer _loadPCMContainer(String filename) throws IOException {
 
         // Define a file representing a PCM to load
         File pcmFile = new File(filename);
@@ -310,12 +364,7 @@ public class ProductChartTest {
         List<PCMContainer> pcmContainers = loader.load(pcmFile);
 
         PCMContainer pcmContainer = pcmContainers.get(0);
-
-        // Get the PCM
-        PCM pcm = pcmContainer.getPcm();
-
-        return pcm ;
-
+        return pcmContainer;
     }
 
 

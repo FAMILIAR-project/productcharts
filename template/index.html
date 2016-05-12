@@ -19,7 +19,15 @@
     TESTER = document.getElementById('tester');
 
 Plotly.plot( TESTER, [{mode: "markers", {{pcmData}} }], {
-    margin: { t: 0 } }, {displayModeBar: false} );
+    margin: { t: 20 },
+     xaxis: {
+         title: '{{xFeature}}'
+    },
+      yaxis: {
+        title: '{{yFeature}}',
+
+      },
+    }, {displayModeBar: false} );
 
 /* Current Plotly.js version */
 console.log( Plotly.BUILD );
