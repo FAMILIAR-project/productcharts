@@ -14,10 +14,12 @@ import org.trimou.engine.MustacheEngine;
 import org.trimou.engine.MustacheEngineBuilder;
 
 import org.trimou.engine.locator.FileSystemTemplateLocator;
+import org.trimou.util.ImmutableMap;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.List;
 
 import static junit.framework.TestCase.assertFalse;
@@ -108,7 +110,8 @@ public class ProductChartTest {
                 "\tx: [1, 2, 3, 4, 5],\n" +
                 "\ty: [1, 2, 4, 8, 16]";
 
-        String output = engine.getMustache("index").render(data);
+        Mustache mustache = engine.getMustache("index");
+        String output = mustache.render(ImmutableMap.<String, Object>of("pcmData", data));
 
         FileWriter fw = new FileWriter(new File(chartTargetFolder + "/" + "index0.html"));
         fw.write(output);
@@ -137,9 +140,8 @@ public class ProductChartTest {
                 "\tx: [1, 2, 3, 4, 5],\n" +
                 "\ty: [1, 2, 4, 8, 16] }]";*/
 
-        String output = engine.getMustache("index").render(data);
-
-        //System.err.println("output:" + output);
+        Mustache mustache = engine.getMustache("index");
+        String output = mustache.render(ImmutableMap.<String, Object>of("pcmData", data));
 
         FileWriter fw = new FileWriter(new File(chartTargetFolder + "/" + "index.html"));
         fw.write(output);
@@ -167,7 +169,8 @@ public class ProductChartTest {
         String data = pchart.buildData();
 
 
-        String output = engine.getMustache("index").render(data);
+        Mustache mustache = engine.getMustache("index");
+        String output = mustache.render(ImmutableMap.<String, Object>of("pcmData", data));
 
         FileWriter fw = new FileWriter(new File(chartTargetFolder + "/" + "index-bubble.html"));
         fw.write(output);
@@ -194,7 +197,8 @@ public class ProductChartTest {
         String data = pchart.buildData();
 
 
-        String output = engine.getMustache("index").render(data);
+        Mustache mustache = engine.getMustache("index");
+        String output = mustache.render(ImmutableMap.<String, Object>of("pcmData", data));
 
         FileWriter fw = new FileWriter(new File(chartTargetFolder + "/" + "index-pokemon-bubble.html"));
         fw.write(output);
@@ -221,7 +225,8 @@ public class ProductChartTest {
         String data = pchart.buildData();
 
 
-        String output = engine.getMustache("index").render(data);
+        Mustache mustache = engine.getMustache("index");
+        String output = mustache.render(ImmutableMap.<String, Object>of("pcmData", data));
 
         FileWriter fw = new FileWriter(new File(chartTargetFolder + "/" + "index-nokia.html"));
         fw.write(output);
@@ -247,8 +252,8 @@ public class ProductChartTest {
         ProductChartBuilder pchart = new ProductChartBuilder(pcmN, "Megapixel", "Weight (g)"); // argument is Real
         String data = pchart.buildData();
 
-
-        String output = engine.getMustache("index").render(data);
+        Mustache mustache = engine.getMustache("index");
+        String output = mustache.render(ImmutableMap.<String, Object> of("pcmData", data));
 
         FileWriter fw = new FileWriter(new File(chartTargetFolder + "/" + "index-nokia2.html"));
         fw.write(output);
@@ -276,7 +281,8 @@ public class ProductChartTest {
         String data = pchart.buildData();
 
 
-        String output = engine.getMustache("index").render(data);
+        Mustache mustache = engine.getMustache("index");
+        String output = mustache.render(ImmutableMap.<String, Object>of("pcmData", data, "pcmTitle", "Nokia"));
 
         FileWriter fw = new FileWriter(new File(chartTargetFolder + "/" + "index-nokia-bubble.html"));
         fw.write(output);

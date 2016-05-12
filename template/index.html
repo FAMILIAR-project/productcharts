@@ -10,18 +10,22 @@
     You can size them in the plot layout,
     or give the div a size as shown here.
 -->
+
+<h1> {{pcmTitle}} </h1>
 <div id="tester" style="width:90%;height:800px;"></div>
 
 <script>
 
     TESTER = document.getElementById('tester');
 
-Plotly.plot( TESTER, [{mode: "markers", {{this}} }], {
-    margin: { t: 0 } }, {displayModeBar: true} );
+Plotly.plot( TESTER, [{mode: "markers", {{pcmData}} }], {
+    margin: { t: 0 } }, {displayModeBar: false} );
 
 /* Current Plotly.js version */
 console.log( Plotly.BUILD );
 </script>
+
+
 
 </body>
 
