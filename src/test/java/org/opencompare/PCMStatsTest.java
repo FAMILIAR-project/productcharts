@@ -2,15 +2,19 @@ package org.opencompare;
 
 import org.junit.Test;
 import org.opencompare.api.java.PCM;
+import org.opencompare.api.java.PCMContainer;
+import org.opencompare.api.java.impl.io.KMFJSONLoader;
+import org.opencompare.api.java.io.PCMLoader;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Created by macher1 on 13/05/2016.
@@ -149,5 +153,39 @@ public class PCMStatsTest {
 
         }
 
+    }
+
+
+    @Test
+    public void testMinMaxDataset() throws IOException {
+
+
+        File dir = new File("/Users/macher1/Downloads/model/");
+        assertTrue(dir.isDirectory());
+
+        File[] pcms = dir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".pcm");
+            }
+        });
+
+        assertTrue(pcms.length > 0);
+
+        int i = 0;
+        for (File pcmFile : pcms) {
+
+            PCMLoader loader = new KMFJSONLoader();
+            List<PCMContainer> pcmContainers = loader.load(pcmFile);
+            for (PCMContainer pcmContainer : pcmContainers) {
+                PCM pcm = pcmContainer.getPcm();
+                assertNotNull(pcm);
+                i++;
+
+                assertTrue(PCMTestUtil.mkBasicStats(pcm).isPresent());
+
+
+            }
+        }
     }
 }

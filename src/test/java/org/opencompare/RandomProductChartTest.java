@@ -181,15 +181,17 @@ public class RandomProductChartTest {
 
 
         String data = pchart.buildData();
+        Optional<String> basicStats = _mkBasicStats(pcm);
 
         Mustache mustache = engine.getMustache("index");
 
-        Map<String, Object> valueTemplates = new HashMap<String, Object>();
+        Map<String, String> valueTemplates = new HashMap<String, String>();
         valueTemplates.put("pcmData", data);
         valueTemplates.put("pcmTitle", pcmName);
         valueTemplates.put("xFeature", xFeature);
         valueTemplates.put("yFeature", yFeature);
         valueTemplates.put("zFeature", zFeature);
+        valueTemplates.put("basicSummary", basicStats.orElse(""));
 
 
         String output = mustache.render(valueTemplates);
@@ -200,6 +202,10 @@ public class RandomProductChartTest {
 
         return true;
 
+    }
+
+    private Optional<String> _mkBasicStats(PCM pcm) {
+        return PCMTestUtil.mkBasicStats(pcm);
     }
 
 

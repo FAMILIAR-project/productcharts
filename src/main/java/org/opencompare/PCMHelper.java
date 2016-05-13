@@ -35,6 +35,8 @@ public class PCMHelper {
     public boolean checkFeatureNumericalUniformity(Feature ft) {
 
         List<Cell> cells = ft.getCells();
+        if (cells.size() == 0)
+            return false;
         Value v0 = null; // first value
         Class<? extends Value> cl = null; // first class, acting as a base for comparison
 
