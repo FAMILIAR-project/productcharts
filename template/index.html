@@ -12,6 +12,13 @@
 -->
 
 <h1> {{pcmTitle}} </h1>
+<div id="summary">
+    <pre>
+        X: {{xFeature}}
+        Y: {{yFeature}}
+        Z (bubble, if any): {{zFeature}}
+    </pre>
+</div>
 <div id="tester" style="width:90%;height:800px;"></div>
 
 <script>
@@ -27,7 +34,7 @@ Plotly.plot( TESTER, [{mode: "markers", {{pcmData}} }], {
         title: '{{yFeature}}',
 
       },
-    }, {displayModeBar: false} );
+    }, {displayModeBar: true} );
 
 /* Current Plotly.js version */
 console.log( Plotly.BUILD );
