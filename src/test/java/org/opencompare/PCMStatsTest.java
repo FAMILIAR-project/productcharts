@@ -4,7 +4,9 @@ import org.junit.Test;
 import org.opencompare.api.java.PCM;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -28,8 +30,6 @@ public class PCMStatsTest {
         Optional<Double> max2 = h.max(pcm, "weight");
         assertTrue(max2.isPresent());
         assertEquals(9997.0, max2.get(), 0.0);
-
-        // Optional<Integer> min = h.min(pcm, "height");
 
         Optional<Double> max3 = h.max(pcm, "identifier");
         assertEquals(Optional.empty(), max3);
@@ -89,6 +89,65 @@ public class PCMStatsTest {
 
         Optional<Double> max3 = h.max(pcm, "identifierrrr");
         assertFalse(max3.isPresent());
+
+    }
+
+    @Test
+    public void testMaxPokemon() throws IOException {
+
+        PCM pcm = PCMTestUtil.mkPokemonPCM();
+        PCMHelper pcmmHelper = new PCMHelper();
+
+        Collection<String> fts = pcmmHelper.collectUniformAndNumericalFeatures(pcm);
+        for (String ft : fts) {
+            Optional<Double> max = pcmmHelper.max(pcm, ft);
+            Optional<Double> min = pcmmHelper.min(pcm, ft);
+            assertTrue(max.isPresent());
+            assertTrue(min.isPresent());
+            System.err.println("Max of feature " + ft + " = " + max.get());
+        }
+
+    }
+
+    @Test
+    public void testMaxPokemonFail() throws IOException {
+
+        PCM pcm = PCMTestUtil.mkPokemonPCM();
+        PCMHelper pcmmHelper = new PCMHelper();
+
+        Collection<String> fts = pcm.getConcreteFeatures().
+                stream().
+                map(f -> f.getName()).
+                collect(Collectors.toList()); // all feature names
+
+        boolean hasFailed = false;
+        for (String ft : fts) {
+            Optional<Double> max = pcmmHelper.max(pcm, ft);
+            Optional<Double> min = pcmmHelper.min(pcm, ft);
+            if (!max.isPresent() || !min.isPresent()) {
+                assertEquals("identifier", ft);
+                hasFailed = true;
+            }
+        }
+        assertTrue(hasFailed);
+
+    }
+
+    @Test
+    public void testMaxNokia() throws IOException {
+
+        PCM pcm = PCMUtils.loadPCM("pcms/Comparison_of_Nikon_DSLR_cameras_0.pcm");
+        PCMHelper pcmmHelper = new PCMHelper();
+
+        Collection<String> fts = pcmmHelper.collectUniformAndNumericalFeatures(pcm);
+        for (String ft : fts) {
+            Optional<Double> max = pcmmHelper.max(pcm, ft);
+            Optional<Double> min = pcmmHelper.min(pcm, ft);
+            assertTrue(max.isPresent());
+            assertTrue(min.isPresent());
+            System.err.println("Max (min) of feature " + ft + " = " + max.get() + " (" + min.get() + ")");
+
+        }
 
     }
 }

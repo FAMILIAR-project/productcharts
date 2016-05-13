@@ -216,4 +216,6 @@ public class ProductChartBuilder {
     public String getX() {
         return _x;
     }
+
+    public String getZ() { return _z;  }
 }

@@ -17,7 +17,9 @@ import org.trimou.util.ImmutableMap;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
@@ -299,15 +301,23 @@ public class ProductChartTest {
         ProductChartBuilder pchart = new ProductChartBuilder(pcmN, "Weight (g)", "Metering pixels", "Focus points");
         String data = pchart.buildData();
 
+
+
+
         String xFeature = pchart.getX();
         String yFeature = pchart.getY();
+        String zFeature = pchart.getZ();
 
         Mustache mustache = engine.getMustache("index");
-        String output = mustache.render(ImmutableMap.<String, Object>of("pcmData", data,
-                "pcmTitle", "Nokia with Bubble",
-                "xFeature", xFeature,
-                "yFeature", yFeature
-                ));
+
+        Map<String, Object> valueTemplates = new HashMap<String, Object>();
+        valueTemplates.put("pcmData", data);
+        valueTemplates.put("pcmTitle", "Nokia with Bubble");
+        valueTemplates.put("xFeature", xFeature);
+        valueTemplates.put("yFeature", yFeature);
+        valueTemplates.put("zFeature", zFeature);
+
+        String output = mustache.render(valueTemplates);
 
         FileWriter fw = new FileWriter(new File(chartTargetFolder + "/" + "index-nokia-bubble.html"));
         fw.write(output);

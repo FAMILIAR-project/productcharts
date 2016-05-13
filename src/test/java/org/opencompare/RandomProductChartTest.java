@@ -184,19 +184,13 @@ public class RandomProductChartTest {
 
         Mustache mustache = engine.getMustache("index");
 
+        Map<String, Object> valueTemplates = new HashMap<String, Object>();
+        valueTemplates.put("pcmData", data);
+        valueTemplates.put("pcmTitle", pcmName);
+        valueTemplates.put("xFeature", xFeature);
+        valueTemplates.put("yFeature", yFeature);
+        valueTemplates.put("zFeature", zFeature);
 
-        Map<String, Object> valueTemplates = ImmutableMap.<String, Object>of("pcmData", data,
-                "pcmTitle", pcmName,
-                "xFeature", xFeature,
-                "yFeature", yFeature
-        );
-        if (chartDimension == 3) {
-            // TODO: weird because yep this is an immutable (unmodifiable) which is OK btw
-            // and we can't use put or methods to basically add new key, values
-            // problem is that method "of" only supports 4 pairs
-            valueTemplates = new HashMap<String, Object>(valueTemplates);
-            valueTemplates.put("zFeature", zFeature);
-        }
 
         String output = mustache.render(valueTemplates);
 
@@ -207,4 +201,6 @@ public class RandomProductChartTest {
         return true;
 
     }
+
+
 }
