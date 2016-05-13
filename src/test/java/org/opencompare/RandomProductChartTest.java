@@ -3,10 +3,7 @@ package org.opencompare;
 import org.junit.Test;
 import org.opencompare.api.java.PCM;
 import org.opencompare.api.java.PCMContainer;
-import org.opencompare.api.java.extractor.CellContentInterpreter;
-import org.opencompare.api.java.impl.PCMFactoryImpl;
 import org.opencompare.api.java.impl.io.KMFJSONLoader;
-import org.opencompare.api.java.io.CSVLoader;
 import org.opencompare.api.java.io.PCMLoader;
 import org.trimou.Mustache;
 import org.trimou.engine.MustacheEngine;
@@ -19,6 +16,7 @@ import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Logger;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -29,18 +27,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class RandomProductChartTest {
 
-    public PCM mkPokemonPCM() throws IOException {
-        CSVLoader csvL = new CSVLoader(
-                new PCMFactoryImpl(),
-                new CellContentInterpreter(new PCMFactoryImpl()));
-
-        List<PCMContainer> pcms = csvL.load(new File("pcms/pokemon.csv"));
-        assertEquals(pcms.size(), 1);
-        PCM _pcmPokemon = pcms.get(0).getPcm();
-
-        assertNotNull(_pcmPokemon);
-        return _pcmPokemon;
-    }
+    Logger _log = Logger.getLogger("RandomProductChartTest");
 
     @Test
     public void testProductChart1() throws Exception {
@@ -71,8 +58,8 @@ public class RandomProductChartTest {
         if (!f.exists() || !f.isDirectory())
             assertTrue(f.mkdir());
 
-        _buildRandomProductChart(mkPokemonPCM(), "Pokemon2", chartTargetFolder, 2);
-        _buildRandomProductChart(mkPokemonPCM(), "Pokemon3", chartTargetFolder, 3);
+        _buildRandomProductChart(PCMTestUtil.mkPokemonPCM(), "Pokemon2", chartTargetFolder, 2);
+        _buildRandomProductChart(PCMTestUtil.mkPokemonPCM(), "Pokemon3", chartTargetFolder, 3);
 
     }
 

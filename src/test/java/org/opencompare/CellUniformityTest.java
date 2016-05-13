@@ -3,20 +3,7 @@ package org.opencompare;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.opencompare.api.java.*;
-import org.opencompare.api.java.extractor.CellContentInterpreter;
-import org.opencompare.api.java.impl.PCMFactoryImpl;
-import org.opencompare.api.java.impl.io.KMFJSONLoader;
-import org.opencompare.api.java.io.CSVLoader;
-import org.opencompare.api.java.io.PCMLoader;
-import org.trimou.Mustache;
-import org.trimou.engine.MustacheEngine;
-import org.trimou.engine.MustacheEngineBuilder;
-import org.trimou.engine.locator.FileSystemTemplateLocator;
-import org.trimou.util.ImmutableMap;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.*;
 import java.util.logging.Logger;
@@ -34,27 +21,11 @@ public class CellUniformityTest {
     Logger _log = Logger.getLogger("CellUniformityTest");
 
 
-
-
-    public PCM mkPokemonPCM() throws IOException {
-        CSVLoader csvL = new CSVLoader(
-                new PCMFactoryImpl(),
-                new CellContentInterpreter(new PCMFactoryImpl()));
-
-        List<PCMContainer> pcms = csvL.load(new File("pcms/pokemon.csv"));
-        assertEquals(pcms.size(), 1);
-        PCM _pcmPokemon = pcms.get(0).getPcm();
-
-        assertNotNull(_pcmPokemon);
-        return _pcmPokemon;
-    }
-
-
     @Test
     public void testUniformCell() throws IOException {
 
         String ftName = "height";
-        Feature ft = PCMUtils.getFeature(mkPokemonPCM(), ftName);
+        Feature ft = PCMUtils.getFeature(PCMTestUtil.mkPokemonPCM(), ftName);
         assertNotNull(ft);
 
 
@@ -67,7 +38,7 @@ public class CellUniformityTest {
     @Test
     public void testFindUniformCells() throws IOException {
 
-        Collection<String> fts = new PCMHelper().collectUniformAndNumericalFeatures(mkPokemonPCM());
+        Collection<String> fts = new PCMHelper().collectUniformAndNumericalFeatures(PCMTestUtil.mkPokemonPCM());
         System.err.println(fts);
         assertEquals(7, fts.size());
     }
