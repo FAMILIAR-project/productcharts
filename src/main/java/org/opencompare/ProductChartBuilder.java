@@ -137,7 +137,7 @@ public class ProductChartBuilder {
         List<Product> pdts = _pcm.getProducts();
         Collection<String> xs = new ArrayList<String>();
         for (Product pdt : pdts) {
-            Cell c = pdt.findCell(_getFeature(_pcm, _x));
+            Cell c = pdt.findCell(PCMUtils.getFeature(_pcm, _x));
             xs.add(c.getContent());
         }
         sb.append(xs.stream()
@@ -166,7 +166,7 @@ public class ProductChartBuilder {
 
         Collection<String> ys = new ArrayList<String>();
         for (Product pdt : pdts) {
-            Cell c = pdt.findCell(_getFeature(_pcm, _y));
+            Cell c = pdt.findCell(PCMUtils.getFeature(_pcm, _y));
             ys.add(c.getContent());
         }
         sb.append(ys.stream()
@@ -192,7 +192,7 @@ public class ProductChartBuilder {
             sb.append("[");
             Collection<String> zs = new ArrayList<String>();
             for (Product pdt : pdts) {
-                Cell c = pdt.findCell(_getFeature(_pcm, _z));
+                Cell c = pdt.findCell(PCMUtils.getFeature(_pcm, _z));
                 zs.add(c.getContent());
             }
             sb.append(zs.stream()
@@ -207,15 +207,7 @@ public class ProductChartBuilder {
         return sb.toString();
     }
 
-    private Feature _getFeature(PCM pcm, String ftName) {
-        List<Feature> fts = pcm.getConcreteFeatures();
-        for (Feature ft : fts) {
-            if (ft.getName().equals(ftName)) {
-                return ft;
-            }
-        }
-        return null;
-    }
+
 
     public String getY() {
         return _y;
