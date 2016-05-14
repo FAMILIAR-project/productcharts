@@ -9,7 +9,6 @@ import org.trimou.Mustache;
 import org.trimou.engine.MustacheEngine;
 import org.trimou.engine.MustacheEngineBuilder;
 import org.trimou.engine.locator.FileSystemTemplateLocator;
-import org.trimou.util.ImmutableMap;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -27,7 +26,12 @@ import static org.junit.Assert.assertTrue;
  */
 public class RandomProductChartTest {
 
-    Logger _log = Logger.getLogger("RandomProductChartTest");
+    private final static Logger _log = Logger.getLogger("RandomProductChartTest");
+
+    /*
+     * a folder with thousands of PCMs
+     */
+    private static File inputPCMDirectory = new File("/Users/macher1/Downloads/model/");
 
     @Test
     public void testProductChart1() throws Exception {
@@ -72,7 +76,7 @@ public class RandomProductChartTest {
         String chartTargetFolder = "outputAll";
         int chartDimension = 2; // X, Y, or Z (bubble size)
 
-        _buildRandomProductCharts(chartTargetFolder, chartDimension);
+        _buildRandomProductCharts(inputPCMDirectory, chartTargetFolder, chartDimension);
 
     }
 
@@ -83,19 +87,22 @@ public class RandomProductChartTest {
         String chartTargetFolder = "outputAllBubble";
         int chartDimension = 3; // X, Y, or Z (bubble size)
 
-        _buildRandomProductCharts(chartTargetFolder, chartDimension);
+        _buildRandomProductCharts(inputPCMDirectory, chartTargetFolder, chartDimension);
 
     }
 
+    // CSV folder of Pokemon: "/Users/macher1/Downloads/pokeapi-master/data/v2"
+
     /**
-     * Generate a produch chart for each PCM in the folder (hard-coded below).
+     * Generate a produch chart for each PCM in the input folder.
      * The output folder is chartTargetFolder
      * user can specify if she wants two or three dimensions
+     * @param inputDir
      * @param chartTargetFolder
      * @param chartDimension
      * @throws IOException
      */
-    private void _buildRandomProductCharts(String chartTargetFolder, int chartDimension) throws IOException {
+    private void _buildRandomProductCharts(File inputDir, String chartTargetFolder, int chartDimension) throws IOException {
         assertTrue(chartDimension == 2 || chartDimension == 3);
 
         // precondition: output folder exist
@@ -103,8 +110,33 @@ public class RandomProductChartTest {
         if (!f.exists() || !f.isDirectory())
             assertTrue(f.mkdir());
 
-        File dir = new File("/Users/macher1/Downloads/model/");
+
+        Collection<List<PCMContainer>> allPcmContainers = collectPCMContainersInAFolder(inputDir);
+        for (List<PCMContainer> pcmContainers : allPcmContainers) {
+            for (PCMContainer pcmContainer : pcmContainers) {
+                PCM pcm = pcmContainer.getPcm();
+                assertNotNull(pcm);
+
+                if (!_buildRandomProductChart(pcm, pcm.getName(), chartTargetFolder, chartDimension))
+                    break;
+            }
+        }
+
+
+
+
+    }
+
+    /**
+     *  collect PCMs into a folder (and set the PCM name with the name file)
+     * @param dir
+     * @return
+     * @throws IOException
+     */
+    private Collection<List<PCMContainer>> collectPCMContainersInAFolder(File dir) throws IOException {
+
         assertTrue(dir.isDirectory());
+        Collection<List<PCMContainer>> containers = new ArrayList<List<PCMContainer>>();
 
         File[] pcms = dir.listFiles(new FilenameFilter() {
             @Override
@@ -115,21 +147,19 @@ public class RandomProductChartTest {
 
         assertTrue(pcms.length > 0);
 
-        int i = 0;
         for (File pcmFile : pcms) {
 
             PCMLoader loader = new KMFJSONLoader();
             List<PCMContainer> pcmContainers = loader.load(pcmFile);
-            for (PCMContainer pcmContainer : pcmContainers) {
-                PCM pcm = pcmContainer.getPcm();
-                assertNotNull(pcm);
-                i++;
-
-                if (!_buildRandomProductChart(pcm, pcmFile.getName(), chartTargetFolder, chartDimension))
-                    break;
+            for (PCMContainer p : pcmContainers) {
+                p.getPcm().setName(pcmFile.getName());
             }
+            containers.add(pcmContainers);
+
+
         }
 
+        return containers;
 
     }
 
