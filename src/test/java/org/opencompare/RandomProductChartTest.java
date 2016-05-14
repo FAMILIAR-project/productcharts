@@ -124,6 +124,25 @@ public class RandomProductChartTest {
 
     }
 
+    @Test
+    public void testProductChartCSVPok4() throws IOException {
+
+        String chartTargetFolder = "outputPokemon";
+
+        // precondition: output folder exist
+        File f = new File(chartTargetFolder);
+        if (!f.exists() || !f.isDirectory())
+            assertTrue(f.mkdir());
+
+        List<PCMContainer> pcms = PCMUtils.loadCSV(PCMTestUtil.CSV_POKEMON_DIR + "natures.csv");
+        assertEquals(pcms.size(), 1);
+        PCM pcm = pcms.get(0).getPcm();
+
+        _buildRandomProductChart(pcm, "PokemonNatures2", chartTargetFolder, 2);
+        _buildRandomProductChart(pcm, "PokemonNatures3", chartTargetFolder, 3);
+
+    }
+
 
 
 

@@ -122,4 +122,19 @@ public class PCMPokemCSV {
         assertEquals(9, pcm.getConcreteFeatures().size());
 
     }
+
+    @Test
+    public void test8() throws IOException {
+
+        List<PCMContainer> pcms = PCMUtils.loadCSV(PCMTestUtil.CSV_POKEMON_DIR + "natures.csv");
+        assertEquals(pcms.size(), 1);
+        PCM pcm = pcms.get(0).getPcm();
+
+        System.err.println("pcm:" + pcm);
+
+        pcm.getConcreteFeatures().stream().forEach(ft -> System.out.println("" + ft.getName()));
+        assertEquals(25, pcm.getProducts().size());
+        assertEquals(7, pcm.getConcreteFeatures().size());
+
+    }
 }
