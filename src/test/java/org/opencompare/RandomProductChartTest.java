@@ -105,7 +105,7 @@ public class RandomProductChartTest {
      * @param chartDimension
      * @throws IOException
      */
-    private void _buildRandomProductCharts(Collection<List<PCMContainer>> allPcmContainers, String chartTargetFolder, int chartDimension) throws IOException {
+    private void _buildRandomProductCharts(Collection<PCMContainer> allPcmContainers, String chartTargetFolder, int chartDimension) throws IOException {
         assertTrue(chartDimension == 2 || chartDimension == 3);
 
         // precondition: output folder exist
@@ -113,28 +113,27 @@ public class RandomProductChartTest {
         if (!f.exists() || !f.isDirectory())
             assertTrue(f.mkdir());
 
-        for (List<PCMContainer> pcmContainers : allPcmContainers) {
-            for (PCMContainer pcmContainer : pcmContainers) {
+        for (PCMContainer pcmContainer : allPcmContainers) {
                 PCM pcm = pcmContainer.getPcm();
                 assertNotNull(pcm);
-
                 if (!_buildRandomProductChart(pcm, pcm.getName(), chartTargetFolder, chartDimension))
                     break;
-            }
         }
 
     }
 
     /**
-     *  collect PCMs into a folder (and set the PCM name with the name file)
+     *  collect PCMs of a folder (and set the PCM name with the name file)
+     *  each .pcm is loaded
+     *  note that a .pcm can contain several PCMContainers
      * @param dir
      * @return
      * @throws IOException
      */
-    private Collection<List<PCMContainer>> collectPCMContainersInAFolder(File dir) throws IOException {
+    private Collection<PCMContainer> collectPCMContainersInAFolder(File dir) throws IOException {
 
         assertTrue(dir.isDirectory());
-        Collection<List<PCMContainer>> containers = new ArrayList<List<PCMContainer>>();
+        Collection<PCMContainer> containers = new ArrayList<PCMContainer>();
 
         File[] pcms = dir.listFiles(new FilenameFilter() {
             @Override
@@ -149,10 +148,11 @@ public class RandomProductChartTest {
 
             PCMLoader loader = new KMFJSONLoader();
             List<PCMContainer> pcmContainers = loader.load(pcmFile);
-            for (PCMContainer p : pcmContainers) {
-                p.getPcm().setName(pcmFile.getName());
+            for (PCMContainer pc : pcmContainers) {
+                containers.add(pc);
+                pc.getPcm().setName(pcmFile.getName());
             }
-            containers.add(pcmContainers);
+
 
 
         }
