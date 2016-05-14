@@ -76,7 +76,7 @@ public class RandomProductChartTest {
         String chartTargetFolder = "outputAll";
         int chartDimension = 2; // X, Y, or Z (bubble size)
 
-        _buildRandomProductCharts(inputPCMDirectory, chartTargetFolder, chartDimension);
+        _buildRandomProductCharts(collectPCMContainersInAFolder(inputPCMDirectory), chartTargetFolder, chartDimension);
 
     }
 
@@ -87,22 +87,25 @@ public class RandomProductChartTest {
         String chartTargetFolder = "outputAllBubble";
         int chartDimension = 3; // X, Y, or Z (bubble size)
 
-        _buildRandomProductCharts(inputPCMDirectory, chartTargetFolder, chartDimension);
+
+        _buildRandomProductCharts(collectPCMContainersInAFolder(inputPCMDirectory), chartTargetFolder, chartDimension);
 
     }
 
     // CSV folder of Pokemon: "/Users/macher1/Downloads/pokeapi-master/data/v2"
 
+
+
     /**
-     * Generate a produch chart for each PCM in the input folder.
+     * Generate a produch chart for each PCM in the collection
      * The output folder is chartTargetFolder
      * user can specify if she wants two or three dimensions
-     * @param inputDir
+     * @param allPcmContainers
      * @param chartTargetFolder
      * @param chartDimension
      * @throws IOException
      */
-    private void _buildRandomProductCharts(File inputDir, String chartTargetFolder, int chartDimension) throws IOException {
+    private void _buildRandomProductCharts(Collection<List<PCMContainer>> allPcmContainers, String chartTargetFolder, int chartDimension) throws IOException {
         assertTrue(chartDimension == 2 || chartDimension == 3);
 
         // precondition: output folder exist
@@ -110,8 +113,6 @@ public class RandomProductChartTest {
         if (!f.exists() || !f.isDirectory())
             assertTrue(f.mkdir());
 
-
-        Collection<List<PCMContainer>> allPcmContainers = collectPCMContainersInAFolder(inputDir);
         for (List<PCMContainer> pcmContainers : allPcmContainers) {
             for (PCMContainer pcmContainer : pcmContainers) {
                 PCM pcm = pcmContainer.getPcm();
@@ -121,9 +122,6 @@ public class RandomProductChartTest {
                     break;
             }
         }
-
-
-
 
     }
 
