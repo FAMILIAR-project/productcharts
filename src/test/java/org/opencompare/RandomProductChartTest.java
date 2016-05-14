@@ -1,9 +1,13 @@
 package org.opencompare;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.opencompare.api.java.PCM;
 import org.opencompare.api.java.PCMContainer;
+import org.opencompare.api.java.extractor.CellContentInterpreter;
+import org.opencompare.api.java.impl.PCMFactoryImpl;
 import org.opencompare.api.java.impl.io.KMFJSONLoader;
+import org.opencompare.api.java.io.CSVLoader;
 import org.opencompare.api.java.io.PCMLoader;
 import org.trimou.Mustache;
 import org.trimou.engine.MustacheEngine;
@@ -27,11 +31,6 @@ import static org.junit.Assert.assertTrue;
 public class RandomProductChartTest {
 
     private final static Logger _log = Logger.getLogger("RandomProductChartTest");
-
-    /*
-     * a folder with thousands of PCMs
-     */
-    private static File inputPCMDirectory = new File("/Users/macher1/Downloads/model/");
 
     @Test
     public void testProductChart1() throws Exception {
@@ -67,6 +66,65 @@ public class RandomProductChartTest {
 
     }
 
+    @Test
+    public void testProductChartCSVPok1() throws IOException {
+
+        String chartTargetFolder = "outputPokemon";
+
+        // precondition: output folder exist
+        File f = new File(chartTargetFolder);
+        if (!f.exists() || !f.isDirectory())
+            assertTrue(f.mkdir());
+
+        List<PCMContainer> pcms = PCMUtils.loadCSV(PCMTestUtil.CSV_POKEMON_DIR + "moves.csv");
+        assertEquals(pcms.size(), 1);
+        PCM pcm = pcms.get(0).getPcm();
+
+        _buildRandomProductChart(pcm, "PokemonMoves2", chartTargetFolder, 2);
+        _buildRandomProductChart(pcm, "PokemonMoves3", chartTargetFolder, 3);
+
+    }
+
+    @Test
+    public void testProductChartCSVPok2() throws IOException {
+
+        String chartTargetFolder = "outputPokemon";
+
+        // precondition: output folder exist
+        File f = new File(chartTargetFolder);
+        if (!f.exists() || !f.isDirectory())
+            assertTrue(f.mkdir());
+
+        List<PCMContainer> pcms = PCMUtils.loadCSV(PCMTestUtil.CSV_POKEMON_DIR + "abilities.csv");
+        assertEquals(pcms.size(), 1);
+        PCM pcm = pcms.get(0).getPcm();
+
+        _buildRandomProductChart(pcm, "PokemonAbilities2", chartTargetFolder, 2);
+        _buildRandomProductChart(pcm, "PokemonAbilities3", chartTargetFolder, 3);
+
+    }
+
+    @Ignore
+    @Test
+    public void testProductChartCSVPok3() throws IOException {
+
+        String chartTargetFolder = "outputPokemon";
+
+        // precondition: output folder exist
+        File f = new File(chartTargetFolder);
+        if (!f.exists() || !f.isDirectory())
+            assertTrue(f.mkdir());
+
+        List<PCMContainer> pcms = PCMUtils.loadCSV(PCMTestUtil.CSV_POKEMON_DIR + "berries.csv");
+        assertEquals(pcms.size(), 1);
+        PCM pcm = pcms.get(0).getPcm();
+
+        _buildRandomProductChart(pcm, "PokemonBerries2", chartTargetFolder, 2);
+        _buildRandomProductChart(pcm, "PokemonBerries3", chartTargetFolder, 3);
+
+    }
+
+
 
 
     @Test
@@ -76,7 +134,10 @@ public class RandomProductChartTest {
         String chartTargetFolder = "outputAll";
         int chartDimension = 2; // X, Y, or Z (bubble size)
 
-        _buildRandomProductCharts(collectPCMContainersInAFolder(inputPCMDirectory), chartTargetFolder, chartDimension);
+        Collection<PCMContainer> pcms = collectPCMContainersInAFolder(new File(PCMTestUtil.PCM_WIKIPEDIASAMPLE_DIR));
+        assertEquals(1411, pcms.size());
+
+        _buildRandomProductCharts(pcms, chartTargetFolder, chartDimension);
 
     }
 
@@ -87,12 +148,25 @@ public class RandomProductChartTest {
         String chartTargetFolder = "outputAllBubble";
         int chartDimension = 3; // X, Y, or Z (bubble size)
 
+        Collection<PCMContainer> pcms = collectPCMContainersInAFolder(new File(PCMTestUtil.PCM_WIKIPEDIASAMPLE_DIR));
+        assertEquals(1411, pcms.size());
 
-        _buildRandomProductCharts(collectPCMContainersInAFolder(inputPCMDirectory), chartTargetFolder, chartDimension);
+        _buildRandomProductCharts(pcms, chartTargetFolder, chartDimension);
 
     }
 
-    // CSV folder of Pokemon: "/Users/macher1/Downloads/pokeapi-master/data/v2"
+    @Test
+    public void testProductChartsCSVPokemon() throws Exception {
+
+
+        String chartTargetFolder = "outputAllBubbleCSV";
+        int chartDimension = 3; // X, Y, or Z (bubble size)
+
+        _buildRandomProductCharts(collectPCMContainersInACSVFolder(new File(PCMTestUtil.CSV_POKEMON_DIR)), chartTargetFolder, chartDimension);
+
+    }
+
+    // CSV folder of Pokemon: "
 
 
 
@@ -116,8 +190,8 @@ public class RandomProductChartTest {
         for (PCMContainer pcmContainer : allPcmContainers) {
                 PCM pcm = pcmContainer.getPcm();
                 assertNotNull(pcm);
-                if (!_buildRandomProductChart(pcm, pcm.getName(), chartTargetFolder, chartDimension))
-                    break;
+                _buildRandomProductChart(pcm, pcm.getName(), chartTargetFolder, chartDimension);
+
         }
 
     }
@@ -147,6 +221,55 @@ public class RandomProductChartTest {
         for (File pcmFile : pcms) {
 
             PCMLoader loader = new KMFJSONLoader();
+            List<PCMContainer> pcmContainers = loader.load(pcmFile);
+            for (PCMContainer pc : pcmContainers) {
+                containers.add(pc);
+                pc.getPcm().setName(pcmFile.getName());
+            }
+
+
+
+        }
+
+        return containers;
+
+    }
+
+    /**
+     *  collect PCMs of a folder (and set the PCM name with the name file)
+     *  each .pcm is loaded
+     *  note that a .pcm can contain several PCMContainers
+     * @param dir
+     * @return
+     * @throws IOException
+     */
+    private Collection<PCMContainer> collectPCMContainersInACSVFolder(File dir) throws IOException {
+
+        assertTrue(dir.isDirectory());
+        Collection<PCMContainer> containers = new ArrayList<PCMContainer>();
+
+        File[] pcms = dir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".csv")
+                        // very specific to CSV folder (CSVs are too BIG)
+                        && !name.contains("pokemon_moves")
+                        && !name.contains("pokemon_species_flavor_text")
+                        && !name.contains("move_flavor_text")
+                        && !name.contains("encounters")
+                        && !name.contains("item_flavor_text")
+                        ;
+            }
+        });
+
+        assertTrue(pcms.length > 0);
+
+        for (File pcmFile : pcms) {
+
+            PCMLoader loader = new CSVLoader(
+                    new PCMFactoryImpl(),
+                    new CellContentInterpreter(new PCMFactoryImpl()));
+
             List<PCMContainer> pcmContainers = loader.load(pcmFile);
             for (PCMContainer pc : pcmContainers) {
                 containers.add(pc);

@@ -20,6 +20,22 @@ public class PCMTestUtil {
 
     private final static Logger _log = Logger.getLogger("PCMTestUtil");
 
+    /*
+    * a folder with CSVs
+    */
+
+    public static final String CSV_POKEMON_DIR = "/Users/macher1/Downloads/pokeapi-master/data/v2/csv/";
+
+
+    /*
+    * a folder with thousands of PCMs
+    */
+
+    static String PCM_WIKIPEDIASAMPLE_DIR = "/Users/macher1/Downloads/model/";
+
+
+    
+
     public static PCM mkPokemonPCM() throws IOException {
         CSVLoader csvL = new CSVLoader(
                 new PCMFactoryImpl(),

@@ -19,7 +19,7 @@ public class ProductChartBuilder {
 
 
 
-    Logger _log = Logger.getLogger("ProductChartBuilder");
+    private final static Logger _log = Logger.getLogger("ProductChartBuilder");
 
 
 

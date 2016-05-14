@@ -3,7 +3,10 @@ package org.opencompare;
 import org.opencompare.api.java.Feature;
 import org.opencompare.api.java.PCM;
 import org.opencompare.api.java.PCMContainer;
+import org.opencompare.api.java.extractor.CellContentInterpreter;
+import org.opencompare.api.java.impl.PCMFactoryImpl;
 import org.opencompare.api.java.impl.io.KMFJSONLoader;
+import org.opencompare.api.java.io.CSVLoader;
 import org.opencompare.api.java.io.PCMLoader;
 
 import java.io.File;
@@ -72,4 +75,28 @@ public class PCMUtils {
         return pcmContainer;
     }
 
+    /**
+     * A helper method to get a PCMContainer from a CSV file (limited in a sense we only retrieve the 1st element of containers)
+     * @param fileName
+     * @return
+     * @throws IOException
+     */
+    public static List<PCMContainer> loadCSV(String fileName) throws IOException {
+
+        return loadCSV(new File(fileName));
+    }
+
+    /**
+     * A helper method to get a PCMContainer from a CSV file (limited in a sense we only retrieve the 1st element of containers)
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    public static List<PCMContainer> loadCSV(File file) throws IOException {
+
+        CSVLoader csvL = new CSVLoader(
+                new PCMFactoryImpl(),
+                new CellContentInterpreter(new PCMFactoryImpl()));
+        return csvL.load(file);
+    }
 }

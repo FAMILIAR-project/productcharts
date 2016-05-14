@@ -33,11 +33,7 @@ public class GettingStartedTest {
     @Test
     public void testPokemonCSV() throws IOException {
 
-        CSVLoader csvL = new CSVLoader(
-                new PCMFactoryImpl(),
-                new CellContentInterpreter(new PCMFactoryImpl()));
-
-        List<PCMContainer> pcms = csvL.load(new File("pcms/pokemon.csv"));
+        List<PCMContainer> pcms = PCMUtils.loadCSV("pcms/pokemon.csv");
         assertEquals(pcms.size(), 1);
         PCM pcm = pcms.get(0).getPcm();
         assertNotNull(pcm);
@@ -71,10 +67,7 @@ public class GettingStartedTest {
         int i = 0;
         for (File pcmFile : pcms) {
 
-            CSVLoader loader = new CSVLoader(
-                    new PCMFactoryImpl(),
-                    new CellContentInterpreter(new PCMFactoryImpl()));
-            List<PCMContainer> pcmContainers = loader.load(pcmFile);
+            List<PCMContainer> pcmContainers = PCMUtils.loadCSV(pcmFile);
             for (PCMContainer pcmContainer : pcmContainers) {
                 PCM pcm = pcmContainer.getPcm();
                 assertNotNull(pcm);

@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  */
 public class PCMHelper {
 
-    Logger _log = Logger.getLogger("PCMHelper");
+    private final static Logger _log = Logger.getLogger("PCMHelper");
 
     
     public Collection<String> collectUniformAndNumericalFeatures(PCM pcm) {

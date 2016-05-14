@@ -36,11 +36,8 @@ public class ProductChartTest {
 
     @Before
     public void mkPokemonPCM() throws IOException {
-        CSVLoader csvL = new CSVLoader(
-                new PCMFactoryImpl(),
-                new CellContentInterpreter(new PCMFactoryImpl()));
 
-        List<PCMContainer> pcms = csvL.load(new File("pcms/pokemon.csv"));
+        List<PCMContainer> pcms = PCMUtils.loadCSV("pcms/pokemon.csv");
         assertEquals(pcms.size(), 1);
         _pcm = pcms.get(0).getPcm();
 
