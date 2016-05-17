@@ -105,7 +105,6 @@ public class RandomProductChartTest {
 
     }
 
-    @Ignore
     @Test
     public void testProductChartCSVPok3() throws IOException {
 

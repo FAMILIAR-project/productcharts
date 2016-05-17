@@ -155,9 +155,7 @@ public class ProductChartBuilder {
     }
 
     public String buildData() {
-
         return buildJSON();
-
     }
 
 

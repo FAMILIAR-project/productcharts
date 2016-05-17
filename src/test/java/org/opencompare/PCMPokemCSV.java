@@ -7,6 +7,7 @@ import org.opencompare.api.java.Product;
 import org.opencompare.api.java.extractor.CellContentInterpreter;
 import org.opencompare.api.java.impl.PCMFactoryImpl;
 import org.opencompare.api.java.io.CSVLoader;
+import org.opencompare.api.java.io.PCMDirection;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,12 +25,12 @@ public class PCMPokemCSV {
     public void test1() throws IOException {
 
 
-        List<PCMContainer> pcms = PCMUtils.loadCSV(PCMTestUtil.CSV_POKEMON_DIR + "ability_changelog.csv");
+        List<PCMContainer> pcms = PCMUtils.loadCSV(PCMTestUtil.CSV_POKEMON_DIR + "ability_changelog.csv", PCMDirection.PRODUCTS_AS_LINES);
         assertEquals(pcms.size(), 1);
         PCM pcm = pcms.get(0).getPcm();
 
         System.err.println("pcm:" + pcm);
-        assertEquals(53, pcm.getProducts().size());
+        assertEquals(52, pcm.getProducts().size());
         assertEquals(3, pcm.getConcreteFeatures().size());
 
     }
@@ -44,8 +45,8 @@ public class PCMPokemCSV {
         PCM pcm = pcms.get(0).getPcm();
 
         System.err.println("pcm:" + pcm);
-        assertEquals(1229, pcm.getProducts().size());
-        assertEquals(2, pcm.getConcreteFeatures().size());
+        assertEquals(1228, pcm.getProducts().size());
+        assertEquals(5, pcm.getConcreteFeatures().size());
 
     }
 
@@ -88,8 +89,8 @@ public class PCMPokemCSV {
         PCM pcm = pcms.get(0).getPcm();
 
         System.err.println("pcm:" + pcm);
-        assertEquals(601, pcm.getProducts().size());
-        assertEquals(15, pcm.getConcreteFeatures().size());
+        assertEquals(600, pcm.getProducts().size());
+        assertEquals(4, pcm.getConcreteFeatures().size());
 
     }
 
@@ -118,8 +119,8 @@ public class PCMPokemCSV {
         System.err.println("pcm:" + pcm);
 
         pcm.getConcreteFeatures().stream().forEach(ft -> System.out.println("" + ft.getName()));
-        assertEquals(65, pcm.getProducts().size());
-        assertEquals(9, pcm.getConcreteFeatures().size());
+        assertEquals(64, pcm.getProducts().size());
+        assertEquals(10, pcm.getConcreteFeatures().size());
 
     }
 
