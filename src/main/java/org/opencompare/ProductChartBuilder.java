@@ -130,7 +130,9 @@ public class ProductChartBuilder {
     public String buildData() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("x: ");
+        sb.append("{");
+
+        sb.append("x: "); // x:
         sb.append("[");
 
 
@@ -203,7 +205,7 @@ public class ProductChartBuilder {
             sb.append("}");
         }
 
-
+        sb.append("}");
         return sb.toString();
     }
 

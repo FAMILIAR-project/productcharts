@@ -29,21 +29,40 @@
 
 <script>
 
-    TESTER = document.getElementById('tester');
 
-Plotly.plot( TESTER, [{mode: "markers", {{pcmData}} }], {
-    margin: { t: 20 },
-     xaxis: {
-         title: '{{xFeature}}'
-    },
-      yaxis: {
-        title: '{{yFeature}}',
+    // data of the PCM
+    var pcmData = {{pcmData}};
+    var x = pcmData['x'];
+    var y = pcmData['y'];
+    var marker = pcmData['marker']; // bubble size
 
-      },
-    }, {displayModeBar: false} );
+    var datum;
+    if (typeof marker === 'undefined') {
+        datum = [{mode: "markers",  x, y}];
+    }
+    else {
+        datum = [{mode: "markers",  x, y, marker}];
+    }
 
-/* Current Plotly.js version */
-console.log( Plotly.BUILD );
+    function depictProductChart() {
+        TESTER = document.getElementById('tester');
+
+        Plotly.plot( TESTER, datum, {
+            margin: { t: 20 },
+             xaxis: {
+                 title: '{{xFeature}}'
+            },
+              yaxis: {
+                title: '{{yFeature}}',
+
+              },
+            }, {displayModeBar: false} );
+
+        /* Current Plotly.js version */
+        console.log( Plotly.BUILD );
+    }
+
+    depictProductChart();
 </script>
 
 
