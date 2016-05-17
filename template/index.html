@@ -12,57 +12,121 @@
 -->
 
 <h1> {{pcmTitle}} </h1>
-<div id="summaryParameters">
-    <pre>
-        X: {{xFeature}}
-        Y: {{yFeature}}
-        Z (bubble, if any): {{zFeature}}
-    </pre>
-</div>
-<div id="tester" style="width:90%;height:500px;"></div>
 
+{{#if candidateFts}}
+<div id="pcAxis">
+    <div id="pcX"><p>feature X: </p></div>
+    <div id="pcY"><p>feature Y: </p></div>
+    <div id="pcZ"><p>feature Z (bubble): </p></div>
+</div>
+{{/if}}
+
+<div id="tester" style="width:90%;height:500px;"></div>
 
 <div id="insights">
     <h2>Basic insights:</h2>
     <pre>{{basicSummary}}</pre>
 </div>
 
+
 <script>
 
 
+
     // data of the PCM
-    var pcmData = {{pcmData}};
-    var x = pcmData['x'];
-    var y = pcmData['y'];
-    var marker = pcmData['marker']; // bubble size
+    var pcmData = {{{pcmData}}};
 
-    var datum;
-    if (typeof marker === 'undefined') {
-        datum = [{mode: "markers",  x, y}];
-    }
-    else {
-        datum = [{mode: "markers",  x, y, marker}];
-    }
+    // candidate features (x, y, or z)
 
-    function depictProductChart() {
+    {{#if candidateFts}}
+    var candidateFts = {{{candidateFts}}};
+    {{/if}}
+
+
+    var currentX;
+    var currentY;
+    var currentZ;
+
+    function depictProductChart(xFt, yFt, zFt) {
+
+       currentX = xFt;
+       currentY = yFt;
+       currentZ = zFt;
+
+       var x = pcmData[xFt];
+       var y = pcmData[yFt];
+       var marker = { size: pcmData[zFt] }; // bubble size
+
+        var datum;
+        if (typeof marker === 'undefined') {
+            datum = [{mode: "markers",  x, y}];
+        }
+        else {
+            datum = [{mode: "markers",  x, y, marker}];
+        }
+
+
         TESTER = document.getElementById('tester');
 
-        Plotly.plot( TESTER, datum, {
+        Plotly.newPlot( TESTER, datum, {
             margin: { t: 20 },
              xaxis: {
-                 title: '{{xFeature}}'
+                 title: xFt
             },
               yaxis: {
-                title: '{{yFeature}}',
+                title: yFt,
 
               },
             }, {displayModeBar: false} );
 
         /* Current Plotly.js version */
-        console.log( Plotly.BUILD );
+        // console.log( Plotly.BUILD );
+
+
     }
 
-    depictProductChart();
+    // TODO: angular directive
+    function mkSelectBox(domEl, vals, changeFct, defaultV) {
+
+        var selectList = document.createElement("select");
+        selectList.id = "ftSelect";
+        selectList.addEventListener ("change", changeFct) ;
+        domEl.appendChild(selectList);
+
+
+         var optionDis = document.createElement("option");
+         selectList.appendChild(optionDis);
+
+        for (var i = 0; i < vals.length; i++) {
+            var option = document.createElement("option");
+            option.value = vals[i];
+            if (option.value === defaultV)
+                option.selected = 'true';
+            option.text = vals[i];
+            selectList.appendChild(option);
+        }
+
+    }
+
+    depictProductChart('{{xFeature}}', '{{yFeature}}', '{{zFeature}}');
+
+    {{#if candidateFts}}
+    mkSelectBox(document.getElementById('pcX'), candidateFts, function (e) {
+            currentX = e.target.value;
+            depictProductChart(currentX, currentY, currentZ);
+            }, currentX);
+
+    mkSelectBox(document.getElementById('pcY'), candidateFts, function (e) {
+    currentY = e.target.value;
+    depictProductChart(currentX, currentY, currentZ);
+    }, currentY);
+
+    mkSelectBox(document.getElementById('pcZ'), candidateFts, function (e) {
+            currentZ = e.target.value;
+            depictProductChart(currentX, currentY, currentZ);
+            }, currentZ);
+    {{/if}}
+
 </script>
 
 

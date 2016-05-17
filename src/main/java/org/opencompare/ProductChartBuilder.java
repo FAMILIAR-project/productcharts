@@ -4,10 +4,7 @@ import org.opencompare.api.java.*;
 import org.opencompare.api.java.value.IntegerValue;
 import org.opencompare.api.java.value.RealValue;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -127,86 +124,40 @@ public class ProductChartBuilder {
     }
 
 
+    public String buildJSON() {
+
+        Collection<String> allFts = new HashSet<String>();
+
+        Collection<Feature> fts  = new PCMHelper().collectUniformAndNumericalFts(_pcm);
+        for (Feature ft : fts) {
+
+            String ftName = _quote(ft.getName());
+            List<Cell> cells = ft.getCells();
+
+            StringBuilder sb = new StringBuilder();
+            sb.append('[');
+            sb.append(cells.stream()
+                    .map(c -> c.getContent())
+                    .collect(Collectors.joining(", ")));
+            sb.append(']');
+            String r = ftName + ": " + sb.toString();
+            allFts.add(r);
+        }
+
+
+      return "{" + allFts.stream()
+              .map(Object::toString)
+              .collect(Collectors.joining(", \n")) + " }";
+    }
+
+    private String _quote(String name) {
+        return "\'" + name + "\'";
+    }
+
     public String buildData() {
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("{");
+        return buildJSON();
 
-        sb.append("x: "); // x:
-        sb.append("[");
-
-
-        List<Product> pdts = _pcm.getProducts();
-        Collection<String> xs = new ArrayList<String>();
-        for (Product pdt : pdts) {
-            Cell c = pdt.findCell(PCMUtils.getFeature(_pcm, _x));
-            xs.add(c.getContent());
-        }
-        sb.append(xs.stream()
-                .map(Object::toString)
-                .collect(Collectors.joining(", ")));
-
-
-/*
-        List<Feature> fts = _pcm.getConcreteFeatures();
-        for (Feature ft : fts) {
-            if (ft.getName().equals(_x)) {
-                List<Cell> cells = ft.getCells();
-                //cells.sort(new CellValueComparator());
-                sb.append(cells.stream()
-                        .map(c -> c.getContent())
-                        .collect(Collectors.joining(", ")));
-            }
-        }*/
-        sb.append("],\n");
-
-
-
-        sb.append("y: ");
-        sb.append("[");
-
-
-        Collection<String> ys = new ArrayList<String>();
-        for (Product pdt : pdts) {
-            Cell c = pdt.findCell(PCMUtils.getFeature(_pcm, _y));
-            ys.add(c.getContent());
-        }
-        sb.append(ys.stream()
-                .map(Object::toString)
-                .collect(Collectors.joining(", ")));
-
-/*
-        for (Feature ft : fts) {
-            if (ft.getName().equals(_y)) {
-                List<Cell> cells = ft.getCells();
-                //cells.sort(new CellValueComparator());
-                sb.append(cells.stream()
-                        .map(c -> c.getContent())
-                        .collect(Collectors.joining(", ")));
-            }
-        }*/
-
-        sb.append("]");
-
-        if (withBubble()) {
-            sb.append(", \n");
-            sb.append("marker: { size: ");
-            sb.append("[");
-            Collection<String> zs = new ArrayList<String>();
-            for (Product pdt : pdts) {
-                Cell c = pdt.findCell(PCMUtils.getFeature(_pcm, _z));
-                zs.add(c.getContent());
-            }
-            sb.append(zs.stream()
-                    .map(Object::toString)
-                    .collect(Collectors.joining(", "))); // / 10
-
-            sb.append("],\n");
-            sb.append("}");
-        }
-
-        sb.append("}");
-        return sb.toString();
     }
 
 

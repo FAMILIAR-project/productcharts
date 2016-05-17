@@ -20,6 +20,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -350,7 +351,7 @@ public class RandomProductChartTest {
 
 
 
-        String data = pchart.buildData();
+        String data = pchart.buildJSON(); // pchart.buildData();
         Optional<String> basicStats = _mkBasicStats(pcm);
 
         Mustache mustache = engine.getMustache("index");
@@ -362,6 +363,9 @@ public class RandomProductChartTest {
         valueTemplates.put("yFeature", yFeature);
         valueTemplates.put("zFeature", zFeature);
         valueTemplates.put("basicSummary", basicStats.orElse(""));
+        valueTemplates.put("candidateFts", '[' + candidateFts.stream()
+                .map(ft -> "\'" + ft + "\'")
+                .collect(Collectors.joining(", ")) + ']');
 
 
         String output = mustache.render(valueTemplates);

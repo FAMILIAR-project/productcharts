@@ -32,6 +32,17 @@ public class PCMHelper {
         return rFts;
     }
 
+    public Collection<Feature> collectUniformAndNumericalFts(PCM pcm) {
+        Collection<Feature> rFts = new ArrayList<Feature>() ;
+        List<Feature> fts = pcm.getConcreteFeatures();
+        for (Feature ft : fts) {
+            if(checkFeatureNumericalUniformity(ft))
+                rFts.add(ft);
+        }
+
+        return rFts;
+    }
+
     public boolean checkFeatureNumericalUniformity(Feature ft) {
 
         List<Cell> cells = ft.getCells();

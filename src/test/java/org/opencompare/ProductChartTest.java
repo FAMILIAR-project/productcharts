@@ -102,12 +102,14 @@ public class ProductChartTest {
                 .addTemplateLocator(new FileSystemTemplateLocator(1, "template/", "html"))
                 .build();
 
-        String data = "" +
+        String data = "{ " +
                 "\tx: [1, 2, 3, 4, 5],\n" +
-                "\ty: [1, 2, 4, 8, 16]";
+                "\ty: [1, 2, 4, 8, 16] }";
 
         Mustache mustache = engine.getMustache("index");
-        String output = mustache.render(ImmutableMap.<String, Object>of("pcmData", data));
+        String output = mustache.render(ImmutableMap.<String, Object>of("pcmData", data, "xFeature", "x",
+                "yFeature", "y"
+                ));
 
         FileWriter fw = new FileWriter(new File(chartTargetFolder + "/" + "index0.html"));
         fw.write(output);
