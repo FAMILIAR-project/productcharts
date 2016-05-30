@@ -1,15 +1,19 @@
-<!DOCTYPE html>
+<html ng-app="phonecatApp">
 <head>
     <!-- Plotly.js -->
     <script src="../js/plotly-latest.min.js"></script>
+    <script src="../js/angular.min.js"></script>
+    <script src="../js/controller.js"></script>
 </head>
 
-<body>
+<body ng-controller="PhoneListCtrl">
 
 <!-- Plots go in blank <div> elements.
     You can size them in the plot layout,
     or give the div a size as shown here.
 -->
+
+
 
 <h1> {{pcmTitle}} </h1>
 
@@ -127,9 +131,14 @@
             }, currentZ);
     {{/if}}
 
+
+
 </script>
 
-
+{{=<% %>=}}
+<div>
+<em>{{pcmData}}</em>
+</div>
 
 </body>
 

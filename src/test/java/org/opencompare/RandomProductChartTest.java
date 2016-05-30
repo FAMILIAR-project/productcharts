@@ -13,6 +13,12 @@ import org.trimou.Mustache;
 import org.trimou.engine.MustacheEngine;
 import org.trimou.engine.MustacheEngineBuilder;
 import org.trimou.engine.locator.FileSystemTemplateLocator;
+import org.trimou.engine.resolver.DummyTransformResolver;
+import org.trimou.engine.resolver.ResolutionContext;
+import org.trimou.engine.resolver.Transformer;
+import org.trimou.handlebars.BasicValueHelper;
+import org.trimou.handlebars.Helper;
+import org.trimou.handlebars.Options;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -322,8 +328,6 @@ public class RandomProductChartTest {
                 .build();
 
         Collection<String> candidateFts = new PCMHelper().collectUniformAndNumericalFeatures(pcm);
-
-
 
         if (candidateFts.size() < chartDimension) {
             _log.warning("Impossible to produce a product chart for PCM: " + pcmName);

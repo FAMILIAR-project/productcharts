@@ -1,11 +1,15 @@
 package org.opencompare;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.junit.Test;
 import org.opencompare.api.java.PCM;
 import org.opencompare.api.java.PCMContainer;
 
 import java.io.IOException;
 
+import static junit.framework.TestCase.assertNotNull;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -21,9 +25,13 @@ public class ProductChartJSON {
 
         ProductChartBuilder pchart = new ProductChartBuilder(pcmN, "weight", "height", "base_experience");
         String json = pchart.buildJSON();
-
-        assertEquals(8, json.split("\r\n|\r|\n").length);
         System.err.println("json=" + json);
+
+        JsonObject jo = new JsonParser().parse(json).getAsJsonObject();
+        assertNotNull(jo);
+
+        assertEquals(8, jo.entrySet().size());
+
 
     }
 
@@ -35,8 +43,11 @@ public class ProductChartJSON {
         ProductChartBuilder pchart = new ProductChartBuilder(pcmN, "weight", "height", "base_experience");
         String json = pchart.buildJSON();
 
-        assertEquals(7, json.split("\r\n|\r|\n").length);
-        System.err.println("json=" + json);
+        JsonObject jo = new JsonParser().parse(json).getAsJsonObject();
+        assertNotNull(jo);
+
+        assertEquals(7, jo.entrySet().size());
+
 
     }
 

@@ -1,8 +1,10 @@
 package org.opencompare;
 
+import com.google.gson.*;
 import org.opencompare.api.java.*;
 import org.opencompare.api.java.value.IntegerValue;
 import org.opencompare.api.java.value.RealValue;
+import play.api.libs.json.Json;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -126,28 +128,30 @@ public class ProductChartBuilder {
 
     public String buildJSON() {
 
-        Collection<String> allFts = new HashSet<String>();
+       JsonObject jsonData = _buildJSON();
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        return gson.toJson(jsonData);
+    }
+
+    private JsonObject _buildJSON() {
+
+        JsonObject jsonData = new JsonObject();
+        Collection<JsonObject> allFts = new HashSet<JsonObject>();
 
         Collection<Feature> fts  = new PCMHelper().collectUniformAndNumericalFts(_pcm);
         for (Feature ft : fts) {
 
-            String ftName = _quote(ft.getName());
+            String ftName = ft.getName(); //_quote(ft.getName());
             List<Cell> cells = ft.getCells();
 
             StringBuilder sb = new StringBuilder();
-            sb.append('[');
-            sb.append(cells.stream()
-                    .map(c -> c.getContent())
-                    .collect(Collectors.joining(", ")));
-            sb.append(']');
-            String r = ftName + ": " + sb.toString();
-            allFts.add(r);
+            JsonArray ja = new JsonArray();
+            cells.stream().forEach(c -> ja.add(c.getContent()));
+            jsonData.add(ftName, ja);
         }
 
 
-      return "{" + allFts.stream()
-              .map(Object::toString)
-              .collect(Collectors.joining(", \n")) + " }";
+      return jsonData;
     }
 
     private String _quote(String name) {
