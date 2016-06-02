@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.opencompare</groupId>
-    <artifactId>getting-started</artifactId>
+    <artifactId>opencompare-pc</artifactId>
     <version>0.7</version>
 
 

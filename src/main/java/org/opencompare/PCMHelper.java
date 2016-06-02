@@ -59,7 +59,7 @@ public class PCMHelper {
                 v0 = v;
                 cl = v0.getClass();
                 if (!(v0 instanceof IntegerValue) && !(v0 instanceof RealValue)) {
-                    _log.info("" + ft.getName() + " // " + v0 + " rejected!");
+                    //_log.info("" + ft.getName() + " // " + v0 + " rejected!");
                     isFeatureHomogeneous = false;
                     break;
                 }
@@ -67,7 +67,7 @@ public class PCMHelper {
             else { // pre: cl != null
                 // if types of v and v0 differ, then the cell implies that the feature is not homogeneous in terms of types
                 if (!cl.equals(v.getClass())) {
-                    _log.info("" + ft.getName() + " rejected!");
+                    //_log.info("" + ft.getName() + " rejected!");
                     isFeatureHomogeneous = false;
                     break;
                 }
