@@ -129,7 +129,7 @@ public class ProductChartBuilder {
     public String buildJSON() {
 
        JsonObject jsonData = _buildJSON();
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        Gson gson = new Gson(); // new GsonBuilder().setPrettyPrinting().create();
         return gson.toJson(jsonData);
     }
 
